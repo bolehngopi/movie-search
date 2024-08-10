@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Movie Search Application
 
-## Getting Started
+A movie search application built with Next.js, Tailwind CSS, and DaisyUI. This application allows users to search for movies using the [OMDb API](http://www.omdbapi.com/), displays results with pagination, and provides a clean and modern user interface.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Search for movies by title using the [OMDb API](http://www.omdbapi.com/).
+- Paginate results to display 8 movies per page.
+- Responsive design optimized for both mobile and desktop views.
+- Utilizes Tailwind CSS and DaisyUI for styling and component design.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js**: A React framework for server-side rendering and static site generation.
+- **Tailwind CSS**: A utility-first CSS framework for styling.
+- **[DaisyUI](https://daisyui.com/)**: A component library for Tailwind CSS that provides pre-styled components.
+- **Axios**: A promise-based HTTP client for making API requests.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
 
-## Learn More
+1. **Clone the repository:**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone https://github.com/Azizkhasyi11/movie-search.git
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Navigate to the project directory:**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```bash
+   cd movie-search-app
+   ```
 
-## Deploy on Vercel
+3. **Install dependencies:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+4. **Set up environment variables:**
+
+   Create a `.env.local` file in the root of the project and add your OMDb API key:
+
+   ```env
+   NEXT_PUBLIC_API_KEY=your_omdb_api_key
+   ```
+
+5. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   The application will be available at `http://localhost:3000`.
+
+## Usage
+
+1. **Search for movies:**
+
+   - Enter a movie title in the search input field and click the "Search" button.
+   - The application will display search results with movie posters, titles, types, and release years.
+
+2. **Navigate through pages:**
+   - Use the pagination controls to navigate between pages of results.
+
+## Contributing
+
+If you want to contribute to this project, please follow these steps:
+
+1. **Fork the repository.**
+2. **Create a new branch (`git checkout -b feature/YourFeature`).**
+3. **Make your changes and commit them (`git commit -am 'Add new feature'`).**
+4. **Push to the branch (`git push origin feature/YourFeature`).**
+5. **Create a new Pull Request.**
