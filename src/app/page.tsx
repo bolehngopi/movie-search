@@ -7,16 +7,27 @@ import Footer from "../components/Footer";
 export default function Home() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const fetchApi = async () => {
-    const res = await axios.get("http://www.omdbapi.com/", {
-      params: {
-        apikey: process.env.NEXT_PUBLIC_API_KEY,
-        s: search,
-      },
-    });
-
-    setData(res?.data?.Search || []);
+    setLoading(true);
+    try {
+      const res = await axios.get("http://www.omdbapi.com/", {
+        params: {
+          apikey: process.env.NEXT_PUBLIC_API_KEY,
+          s: search,
+        },
+      });
+      setData(res?.data?.Search || []);
+      setCurrentPage(1); // Reset to first page on new search
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,65 +35,106 @@ export default function Home() {
     fetchApi();
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
-      <form className="bg-gray-600 p-5 rounded-b" onSubmit={handleSearch}>
-        <div className="flex items-center">
+      <header className="bg-neutral py-4">
+        <form
+          className="max-w-3xl mx-auto flex items-center"
+          onSubmit={handleSearch}
+        >
           <input
             type="text"
             name="search"
             placeholder="Search movie"
-            className="w-full p-2 rounded-l border border-gray-300 focus:outline-none focus:border-blue-500 text-black"
+            className="input input-bordered w-full rounded-r-none focus:outline-none"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded-r border-l-0"
-          >
+          <button type="submit" className="btn btn-primary rounded-l-none">
             Search
           </button>
-        </div>
-      </form>
-      <div className="container mx-auto px-4 my-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {data.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500">
-              No data found
-            </div>
-          ) : (
-            data.map((Movie: any) => (
-              <div
-                key={Movie.imdbID}
-                className="bg-white text-black p-4 shadow-md rounded-md overflow-hidden flex flex-col"
-              >
-                {/* {Movie.Poster !== "N/A" && ( */}
-                <div className="card-img grow">
-                  <img
-                    src={
-                      Movie.Poster === "N/A"
-                        ? "https://via.placeholder.com/256x384"
-                        : Movie.Poster
-                    }
-                    alt={Movie.Title}
-                    className="w-64 h-96 object-cover rounded-md mb-2"
-                  />
-                  {/* )} */}
-                  <a
-                    className="text-xl font-bold underline"
-                    href={`https://www.imdb.com/title/${Movie.imdbID}`}
+        </form>
+      </header>
+      <main className="flex-1 container mx-auto px-4 my-10">
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {currentItems.length === 0 ? (
+                <div className="col-span-full text-center text-gray-500">
+                  No data found
+                </div>
+              ) : (
+                currentItems.map((movie: any) => (
+                  <div
+                    key={movie.imdbID}
+                    className="card bg-base-100 shadow-xl"
                   >
-                    {Movie.Title}
-                  </a>
-                </div>
-                <div className="card-body">
-                  <p className="text-gray-500 capitalize">{Movie.Type}</p>
-                  <p className="text-gray-500">{Movie.Year}</p>
-                </div>
+                    <figure className="overflow-hidden">
+                      <img
+                        src={
+                          movie.Poster === "N/A"
+                            ? "https://via.placeholder.com/256x384"
+                            : movie.Poster
+                        }
+                        alt={movie.Title}
+                        className="object-cover w-full h-full"
+                      />
+                    </figure>
+                    <div className="card-body">
+                      <a
+                        className="card-title link link-hover"
+                        href={`https://www.imdb.com/title/${movie.imdbID}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {movie.Title}
+                      </a>
+                      <p className="text-gray-600 capitalize mt-2">
+                        {movie.Type}
+                      </p>
+                      <p className="text-gray-600">{movie.Year}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            {/* Pagination */}
+            {data.length > itemsPerPage && (
+              <div className="flex justify-center mt-6 join">
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`join-item btn ${
+                      currentPage === index + 1 ? "" : "btn-active"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
               </div>
-            ))
-          )}
-        </div>
-      </div>
+            )}
+          </>
+        )}
+        {data.length > 0 && !loading && (
+          <div className="col-span-full text-center mt-5 text-gray-500">
+            Total results: {data.length}
+          </div>
+        )}
+      </main>
       <Footer />
     </>
   );

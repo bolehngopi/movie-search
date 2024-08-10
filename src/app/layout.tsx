@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-dvh grid grid-rows-[auto_1fr_auto]">{children}</body>
+      <body className="min-h-dvh flex flex-col">
+        {children}
+      </body>
     </html>
   );
 }
